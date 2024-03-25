@@ -30,14 +30,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // late AnimationController _controller;
-
+  final myControllerName = TextEditingController();
   final myController1 = TextEditingController();
   final myController2 = TextEditingController();
   final myController3 = TextEditingController();
   final myController4 = TextEditingController();
 
-
   String _resp = "";
+  String _media = "";
 
   // @override
   // void initState() {
@@ -56,26 +56,33 @@ class _MyHomePageState extends State<MyHomePage> {
     var n2 = double.tryParse(myController2.text.replaceAll(',', "."));
     var n3 = double.tryParse(myController3.text.replaceAll(',', "."));
     var n4 = double.tryParse(myController4.text.replaceAll(',', "."));
-    var calc = (n1! + n2! + n3! + n4!) / 4;
-    setState(() {
-      _resp = (calc >= 6.0) ? "Aprovado !!" : "Reprovado !!";
-    });
-    final snackBar = SnackBar(
-      content: const Text('Voce quer limpar ?'),
-      action: SnackBarAction(
-        label: 'Limpar',
-        onPressed: () {
-          setState(() {
-            _resp = " ";
-            myController1.text = "";
-            myController2.text = "";
-            myController3.text = "";
-            myController4.text = "";
-          });
-        },
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    try {
+      var calc = (n1! + n2! + n3! + n4!) / 4;
+      setState(() {
+        _media = "${myControllerName.text} obteve a media: $calc";
+        _resp = (calc >= 6.0) ? "Aprovado !!" : "Reprovado !!";
+      });
+      final snackBar = SnackBar(
+        content: const Text('Voce quer limpar ?'),
+        action: SnackBarAction(
+          label: 'Limpar',
+          onPressed: () {
+            setState(() {
+              _resp = " ";
+              myController1.text = "";
+              myController2.text = "";
+              myController3.text = "";
+              myController4.text = "";
+            });
+          },
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (ex) {
+      setState(() {
+        _resp = "Informe um valor valido !!!";
+      });
+    }
   }
 
   Widget build(BuildContext context) {
@@ -87,6 +94,24 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    margin: const EdgeInsets.all(15),
+                    width: 500,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Nome :',
+                      ),
+                      onChanged: (value) {
+                        myControllerName.text = value;
+                      },
+                      controller: myControllerName,
+                    )),
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -157,6 +182,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       controller: myController4,
                     )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    margin: const EdgeInsets.all(15),
+                    width: 500,
+                    child: Text(_media)),
               ],
             ),
             Row(
